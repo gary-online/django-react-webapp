@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import api from "../api";
-import Note from "../components/Note.jsx"
-import "../styles/Home.css"
+import Note from "../components/Note.jsx";
+import "../styles/theme.css";
 
 function Home() {
     const [notes, setNotes] = useState([]);
@@ -46,40 +47,58 @@ function Home() {
             .catch((err) => alert(err));
     };
 
-    return (
-        <div>
-            <div>
-                <h2>Notes</h2>
-                {notes.map((note) => (
-                    <Note note={note} onDelete={deleteNote} key={note.id} />
-                ))}
+        return (
+            <div className="grid" style={{ gap: 24 }}>
+                <section className="card padded">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                        <h2>Your Notes</h2>
+                        <Link to="/analytics" className="btn btn-ghost">View Analytics</Link>
+                    </div>
+                    {notes.length === 0 ? (
+                        <div className="empty-state">
+                            <h3>No notes yet</h3>
+                            <p style={{ color: "var(--color-text-muted)" }}>Create your first note using the form below.</p>
+                        </div>
+                    ) : (
+                        <div className="grid notes">
+                            {notes.map((note) => (
+                                <Note note={note} onDelete={deleteNote} key={note.id} />
+                            ))}
+                        </div>
+                    )}
+                </section>
+                <section className="card padded">
+                    <h2>Create a Note</h2>
+                    <form onSubmit={createNote} style={{ marginTop: 12 }}>
+                        <label className="label" htmlFor="title">Title</label>
+                        <input
+                            className="input"
+                            type="text"
+                            id="title"
+                            name="title"
+                            required
+                            onChange={(e) => setTitle(e.target.value)}
+                            value={title}
+                            placeholder="Give it a catchy title"
+                        />
+                        <label className="label" htmlFor="content">Content</label>
+                        <textarea
+                            className="textarea"
+                            id="content"
+                            name="content"
+                            rows={4}
+                            required
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="Write your thoughts..."
+                        />
+                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+                            <button className="btn btn-primary" type="submit">Save Note</button>
+                        </div>
+                    </form>
+                </section>
             </div>
-            <h2>Create a Note</h2>
-            <form onSubmit={createNote}>
-                <label htmlFor="title">Title:</label>
-                <br />
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    required
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                />
-                <label htmlFor="content">Content:</label>
-                <br />
-                <textarea
-                    id="content"
-                    name="content"
-                    required
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-                <br />
-                <input type="submit" value="Submit"></input>
-            </form>
-        </div>
-    );
+        );
 }
 
 export default Home;
